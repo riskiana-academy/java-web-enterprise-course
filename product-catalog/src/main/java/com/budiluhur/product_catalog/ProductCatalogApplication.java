@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.budiluhur.product_catalog.model.Product;
-import com.budiluhur.product_catalog.service.ProductService;
+import com.budiluhur.product_catalog.repository.ProductRepository;
 
 @SpringBootApplication
 public class ProductCatalogApplication {
@@ -16,17 +16,17 @@ public class ProductCatalogApplication {
 	}
 
 	@Bean
-	public CommandLineRunner run(
-			ProductService productService) {
+	public CommandLineRunner initData(
+			ProductRepository repository) {
 		return args -> {
-			System.out.println("=== SPRING BOOT PRODUCT CATALOG IS RUNNING ===");
-			productService.createProduct(
-					new Product("PRD-03",
-							"Monitor Gaming 24 Inch",
-							2100000.0));
-			System.out.println("Daftar Produk di Spring Container:");
-			productService.getAllProducts()
-					.forEach(System.out::println);
+			repository.save(new Product(
+					"PRD-01", "Keyboard Mechanical",
+					450000.0));
+			repository.save(new Product(
+					"PRD-02", "Mouse Wireless Silent",
+					175000.0));
+			System.out.println(
+					"Data awal berhasil disimpan!");
 		};
 	}
 

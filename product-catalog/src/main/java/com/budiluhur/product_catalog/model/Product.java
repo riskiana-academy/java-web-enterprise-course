@@ -1,13 +1,30 @@
 package com.budiluhur.product_catalog.model;
 
+import org.hibernate.Incubating;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 /**
  * Product
  */
+@Entity 
+@Table(name = "products")
 public class Product {
+    @Id
     private String id;
+
+    @Column(nullable = false, length = 100)
     private String name;
+
+    @Column(nullable = false)
     private double price;
     
+    public Product(){
+        
+    }
 
     public Product(String id, String name, double price) {
         this.id = id;

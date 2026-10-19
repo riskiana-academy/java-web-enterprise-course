@@ -22,21 +22,30 @@ public class ProductService {
     }
 
     public Product getProductById(String id) throws ProductNotFoundException {
-        return productRepository.findById(id);
+        return productRepository.findById(id)
+         .orElseThrow(() ->
+                new ProductNotFoundException(
+                    "Produk dengan ID '" + id
+                    + "' tidak ditemukan!"));
+
     }
 
     public Product createProduct(Product product) {
-        productRepository.addProduct(product);
-        return product;
+         // Simpan ke database via JPA
+        return productRepository.save(product);
     }
 
-    public Product updateProduct(String id, Product product)
+    public Product updateProduct(String id, Product updatedProduct)
             throws ProductNotFoundException {
-        return productRepository.updateProduct(id, product);
+       Product existingProduct = getProductById(id);
+       existingProduct.setName(updatedProduct.getName());
+       existingProduct.setPrice(updatedProduct.getPrice());
+       return  productRepository.save(existingProduct);
     }
 
-    public boolean deleteProduct(String id) throws ProductNotFoundException {
-        return productRepository.deleteById(id);
+    public void  deleteProduct(String id) throws ProductNotFoundException {
+       Product existingProduct = getProductById(id);
+       productRepository.delete(existingProduct);
     }
 
 }
