@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.budiluhur.product_catalog.dto.ProductCreateRequest;
+import com.budiluhur.product_catalog.dto.ProductResponse;
 import com.budiluhur.product_catalog.exception.ProductNotFoundException;
 import com.budiluhur.product_catalog.model.Product;
 import com.budiluhur.product_catalog.service.ProductService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
@@ -30,31 +34,30 @@ public class ProductController {
 
     // 1. GET ALL: GET /api/products
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<ProductResponse>> getAllProducts() {
+        return ResponseEntity.ok(
+                productService.getAllProducts());
+
     }
 
     // 2. GET BY ID: GET /api/products/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<?> getProductById(@PathVariable("id") String id) {
-        try {
-            Product product = productService.getProductById(id);
-            return ResponseEntity.ok(product);
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable("id") String id)
+            throws ProductNotFoundException {
+        return ResponseEntity.ok(
+                productService
+                        .getProductById(id));
+
     }
 
     // 3. CREATE: POST /api/products
     @PostMapping
-    public ResponseEntity<String> createProduct(@RequestBody Product product) {
-        productService.createProduct(product);
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest request) {
+        ProductResponse createdProduct = productService.createProduct(
+                request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body("Produk '" + product.getName()
-                        + "' berhasil ditambahkan!");
+                .body(createdProduct);
     }
 
     // 4. UPDATE: PUT /api/products/{id}
